@@ -1,0 +1,161 @@
+
+<%= stylesheet_link_tag "custom"%>
+<script src="/assets/deviserails4.js"></script>
+<script src="/assets/deviserails4Controller.js"></script>
+<script src="/assets/directives/rcSubmit.js"></script>
+<script src="/assets/directives/rcVerifySet.js"></script>
+
+<script src="/assets/modules/rcDisabled.js"></script>
+<script src="/assets/modules/rcForm.js"></script>
+<script src="/assets/modules/rcMailgun.js"></script>
+<script src="/assets/modules/rcWizard.js"></script>
+
+
+<div id="notice_wizard">
+  <% flash.each do |key, value| %>
+    <%= content_tag(:div, value, :class => "flash #{key}") %>
+  <% end %>
+</div>
+
+
+<div class="page-header" style="margin: 20px 30px"> 
+<h2 >
+		<% if !current_user.username.blank?%>
+                <%= current_user.username%>
+		<%else%>
+				
+                <%= current_user.email%>  Profile Page
+<%end%>
+</h2>
+</div>
+
+
+<div ng-app="deviserails4">
+    <div class="container" >
+      <div class="row">
+        <div class="col-xs-12 col-sm-6 col-sm-offset-3">
+          <h1>Simple Wizard</h1>
+          <div ng-controller="deviserails4Controller" 
+               rc-wizard="sampleWizard" rc-disabled="rc.firstForm.submitInProgress" ng-init="init(<%=current_user.to_json %>)">
+            <ul class="nav rc-nav-wizard">
+              <li class="active">
+                <a class="active" href="#first" data-toggle="tab">
+                  <span class="badge">1</span>
+                  <span>First Step</span>
+                </a>
+              </li>
+              <li>
+                <a href="#second" data-toggle="tab">
+                  <span class="badge">2</span>
+                  <span>Second Step</span>
+                </a>
+              </li>
+              <li>
+                <a href="#last" data-toggle="tab">
+                  <span class="badge">3</span>
+                  <span>Last Step</span>
+                </a>
+              </li>
+            </ul>
+            <div class="tab-content">
+	<%#= form_for @user, id: "first", html: { name: "firstForm", :class=>"tab-pane active", "rc-submit"=> "saveState(user)","rc-step" =>"", "novalidate" => "" } do |f| %>
+
+               <form class="tab-pane active" id="first" name="firstForm" rc-submit="saveState(user)" rc-step novalidate>
+                <h2>Fill out your profile info</h2>
+                <div class="form-group"
+                     ng-class="{'has-error': rc.firstForm.needsAttention(firstForm.firstname)}">
+                  <label class="control-label">First Name</label>
+       <!--           <input name="firstName" class="form-control" type="text" required
+                         ng-model="user.firstName"/>-->
+		  <%= text_field :user, :firstname, class: "form-control", "ng-model" => "user.firstname",:name=>"firstname", required: true  %>
+                </div>
+                <div class="form-group"
+                     ng-class="{'has-error': rc.firstForm.needsAttention(firstForm.lastname)}">
+                  <label class="control-label">Last Name</label>
+<!--                  <input name="lastName" class="form-control" type="text" required
+                         ng-model="user.lastName" />-->
+		    <%= text_field :user,:lastname, class: "form-control", "ng-model" => "user.lastname",:name=>"lastname", required: true %>
+                </div>
+		<div class="form-group"
+                     ng-class="{'has-error': rc.firstForm.needsAttention(firstForm.hometown)}">
+                  <label class="control-label">Home Town</label>
+<!--                  <input name="hometown" class="form-control" type="text" required
+                         ng-model="user.hometown" />-->
+                    <%= text_field :user,:hometown, class: "form-control", "ng-model" => "user.hometown",:name=>"hometown", required: true %>
+                </div>
+   
+               <%#end%>
+                   </form>
+              <form class="tab-pane" id="second" name="secondForm" rc-submit="saveState(user)" rc-step novalidate>
+		<%#= form_for @user, id: "second", html: { name: "secondForm", :class=>"tab-pane", "rc-submit"=> "saveState(user)","rc-step" =>"", "novalidate" => "" } do |f| %>
+                <h2>Fill out your education info</h2>
+                <div class="form-group">
+                  <label class="control-label">High School</label>
+     <!--             <input name="highschool" class="form-control" type="text" 
+                         ng-model="user.highschool" />-->
+			 <%= text_field :user, :highschool, class: "form-control", "ng-model" => "user.highschool"%>
+                </div>
+                <div class="form-group">
+                  <label class="control-label">Current City</label>
+  <!--                <input name="city" class="form-control" type="text" 
+                         ng-model="user.city" />-->
+			  <%= text_field :user, :city, class: "form-control", "ng-model" => "user.city" %>
+                </div>
+                <div class="form-group">
+                  <label class="control-label">State</label>
+       <!--           <input name="state" class="form-control" type="text" 
+                         ng-model="user.state" />-->
+			 <%= text_field :user,:state, class: "form-control", "ng-model" => "user.state"%>
+                </div>
+                <div class="form-group">
+                  <label class="control-label">College/University</label>
+         <!--         <input name="college" class="form-control" type="text" 
+                         ng-model="user.college" />-->
+			  <%= text_field :user, :college, class: "form-control", "ng-model" => "user.college" %>
+                </div>
+		                <div class="form-group">
+                  <label class="control-label">Occupation(Job/Profession)</label>
+         <!--         <input name="college" class="form-control" type="text" 
+                         ng-model="user.college" />-->
+		 <%= text_field :user, :occupation, class: "form-control", "ng-model" => "user.occupation" %>
+                </div>
+		
+    </form>
+        <%#end%>
+              <form class="tab-pane" id="last" name="lastForm" rc-submit="completeWizard(user)" rc-step>
+                <h2>Finish last step</h2>
+                <div class="form-group">
+                  <label class="control-label">Address:</label>
+		   <%= text_field :user, :address, class: "form-control", "ng-model" => "user.address" %>
+                 <!-- <p class="form-control-static">{{ user.firstname }}</p>-->
+                </div>
+                <div class="form-group">
+                  <label class="control-label">Postalcode:</label>
+		   <%= text_field :user, :postalcode, class: "form-control", "ng-model" => "user.postalcode" %>
+                <!--  <p class="form-control-static">{{ user.lastname }}</p>-->
+                </div>
+      <!--          <div class="form-group">
+                  <label class="control-label">Address:</label>
+                  <p class="form-control-static">
+                    {{ user.streetAddress }}
+                    <br />
+                    {{ user.city }}, {{ user.state }} {{ user.postalCode }}
+                  </p>
+                </div>-->
+              </form>
+            </div>
+            <div class="form-group">
+              <div class="pull-right">
+                <a class="btn btn-default" ng-click="rc.sampleWizard.backward()"
+                   ng-show="rc.sampleWizard.currentIndex > rc.sampleWizard.firstIndex">Back</a>
+                <a class="btn btn-primary" data-loading-text="Please Wait..." ng-click="rc.sampleWizard.forward()" 
+                   ng-show="rc.sampleWizard.currentIndex < rc.sampleWizard.navigationLength ">Continue</a> {{rc.sampleWizard.currentIndex}} {{rc.sampleWizard.navigationLength}}
+                <a class="btn btn-primary" ng-click="rc.sampleWizard.forward()" 
+                   ng-show="rc.sampleWizard.currentIndex == rc.sampleWizard.navigationLength">Complete</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
