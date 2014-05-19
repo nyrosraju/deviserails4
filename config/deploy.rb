@@ -51,6 +51,13 @@ set :bundle_roles, :all
 
 # Default value for keep_releases is 5
 # set :keep_releases, 5
+set :deploy_via, :copy
+
+set :stages, ["production"]
+set :default_stage, "production"
+
+set :linked_files, %w{config/database.yml}
+set :linked_dirs, %w{bin log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system}
 
 namespace :deploy do
 
@@ -59,6 +66,7 @@ namespace :deploy do
   #task :start do ; end
   #task :stop do ; end
   #
+  before :deploy, "deploy:check_revision"
   task :restart do
     on roles(:app), in: :sequence, wait: 5 do
       # Your restart mechanism here, for example:
@@ -69,7 +77,7 @@ namespace :deploy do
   end
 
   after :publishing, :restart
-
+  after :finishing, 'deploy:cleanup'
   after :restart, :clear_cache do
     on roles(:web), in: :groups, limit: 3, wait: 10 do
       # Here we can do anything such as:
