@@ -43,6 +43,11 @@ gem 'omniauth'
 gem 'omniauth-facebook'
 gem 'omniauth-twitter'
 
+
+group :development do
+    gem 'capistrano'
+end
+gem "net-ssh"
 #gem "angularjs-rails"
 #
 #gem 'angularjs-rails-resource', '~> 1.0.0'
